@@ -1,6 +1,7 @@
 import chess
 from random_agent import RandomAgent
 from greedy_agent import GreedyAgent
+from minimax_agent import MinimaxAgent
 
 
 def compare_policies(P1, P2, simulations):
@@ -36,9 +37,9 @@ def play_game(P1, P2):
 
 def main():
 
-    P1 = GreedyAgent(chess.WHITE)
+    P1 = MinimaxAgent(chess.WHITE, 15)
     P2 = RandomAgent(chess.BLACK)
-    result = compare_policies(P1, P2, 100)
+    result = compare_policies(P1, P2, 1)
     print(result)
     
         
