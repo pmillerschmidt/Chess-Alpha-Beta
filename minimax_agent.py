@@ -18,7 +18,7 @@ class MinimaxAgent():
         return 0
     
     # what is the material balance
-    # from stack overflow
+    # from StackOverflow
     def material_balance(self, board):
         white = board.occupied_co[chess.WHITE]
         black = board.occupied_co[chess.BLACK]
@@ -30,45 +30,43 @@ class MinimaxAgent():
             9 * (chess.popcount(white & board.queens) - chess.popcount(black & board.queens)))
     
     # heuristic function 
-    def heuristic(self, board):
-        material = self.material_balance(board)
-        return material
+    def heuristic(self, board, player):
+        # if the game ends in checkmate, return very high evaluation
+        if board.is_checkmate():
+            reward = 500 if player == chess.WHITE else -500
+        elif board.is_stalemate() or board.is_insufficient_material():
+            reward = 0
+        else:
+            reward = self.material_balance(board)
+        return reward
 
     
     def minimax(self, board, player, depth, depth_limit):
-        # print(board)
-        # if the game ends in checkmate, return very high evaluation
-        if board.is_checkmate():
-            return 500 if player==chess.WHITE else -500
-        if board.is_stalemate() or board.is_insufficient_material():
-            return 0
-        
         # if depth is 0, return the evaluation
         if depth == 0:
-            # print(self.heuristic(board))
-            return self.heuristic(board)
+            return self.heuristic(board, player)
 
         # if its white's turn
         if player==chess.WHITE:
             evaluations = []
             for move in board.legal_moves:
                 board.push(move)
-                evaluations.append(self.minimax(board, chess.BLACK, depth - 1, depth_limit))
+                evaluations.append((move, self.minimax(board, chess.BLACK, depth - 1, depth_limit)))
                 board.pop()
-            return max(evaluations)
+            return max(evaluations, key = lambda x: x[1])
         # if its black's turn
         else:
+            evaluations = []
             for move in board.legal_moves:
-                evaluations = []
                 board.push(move)
-                evaluations.append(self.minimax(board, chess.WHITE, depth - 1, depth_limit))
+                evaluations.append((move, self.minimax(board, chess.WHITE, depth - 1, depth_limit)))
                 board.pop()
-            return min(evaluations)
-        
-            
+            return min(evaluations, key = lambda x: x[1])
 
+        
     def play(self, board):
-        return self.minimax(board, self.color, self.depth_limit, self.depth_limit)
+        move = self.minimax(board, self.color, self.depth_limit, self.depth_limit)[0]
+        board.push(move)
         
 
 
