@@ -7,9 +7,11 @@ class MinimaxAgent():
         self.color = color
         self.depth = depth
 
-    # what material is gained from this move
-    # function from StackOverflow 
     def material_gained(self, board, move):
+        """
+        Function to determine the material gained from a given move
+        Citation: https://stackoverflow.com/questions/61778579/what-is-the-best-way-to-find-out-if-the-move-captured-a-piece-in-python-chess
+        """
         if board.is_capture(move):
             if board.is_en_passant(move):
                 return chess.PAWN
@@ -17,28 +19,24 @@ class MinimaxAgent():
                 return board.piece_at(move.to_square).piece_type
         return 0
     
-    # edit this function to make it cleaner
     def material_balance(self, board):
-        wp = len(board.pieces(chess.PAWN, chess.WHITE))
-        bp = len(board.pieces(chess.PAWN, chess.BLACK))
-
-        wn = len(board.pieces(chess.KNIGHT, chess.WHITE))
-        bn = len(board.pieces(chess.KNIGHT, chess.BLACK))
-
-        wb = len(board.pieces(chess.BISHOP, chess.WHITE))
-        bb = len(board.pieces(chess.BISHOP, chess.BLACK))
-
-        wr = len(board.pieces(chess.ROOK, chess.WHITE))
-        br = len(board.pieces(chess.ROOK, chess.BLACK))
-
-        wq = len(board.pieces(chess.QUEEN, chess.WHITE))
-        bq = len(board.pieces(chess.QUEEN, chess.BLACK))
+        """
+        Function that calculates the material balance of the board (white pieces - black pieces)
+        """
+        w_balance, b_balance = 0, 0
+        pieces = [(1, chess.PAWN), (3.2, chess.KNIGHT), (3.3, chess.BISHOP), (5, chess.ROOK), (9, chess.QUEEN)]
         
-        evaluation = (wp - bp) + 3.2 * (wn - bn) + 3.3 * (wb - bb) + 5 * (wr - br) + 9 * (wq - bq)
-
-        return evaluation
+        for piece in pieces:
+            w_balance += piece[0] * len(board.pieces(piece[1], chess.WHITE))
+            b_balance += piece[0] * len(board.pieces(piece[1], chess.BLACK))
+        
+        balance = w_balance - b_balance
+        return balance
         
     def heuristic(self, board, player):
+        """
+        Heuristic function to determine the value of a given board position
+        """
         if board.is_checkmate():
             reward = 500 if player == chess.BLACK else -500
         elif board.is_stalemate() or board.is_insufficient_material():
@@ -49,6 +47,9 @@ class MinimaxAgent():
 
     
     def minimax(self, board, player, depth, alpha, beta):
+        """
+        Minimax algorithm with alpha-beta pruning
+        """
         if depth == 0 or board.is_game_over():
             return (None, self.heuristic(board, player))
 
@@ -62,7 +63,7 @@ class MinimaxAgent():
                     best_score = score[1]
                     best_move = move
                     alpha = max(alpha, best_score)
-                    
+
                 board.pop()
                 if beta <= alpha:
                     break
@@ -88,5 +89,8 @@ class MinimaxAgent():
             
         
     def play(self, board):
+        """
+        Driver function to determine and make the best move
+        """
         move = self.minimax(board, self.color, self.depth, float('-inf'), float('inf'))[0]
         board.push(move)

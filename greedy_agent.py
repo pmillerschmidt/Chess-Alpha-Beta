@@ -6,9 +6,11 @@ class GreedyAgent():
     def __init__(self, color):
         self.color = color
 
-    # what material is gained from this move
-    # function from StackOverflow 
     def material_gained(self, board, move):
+        """
+        Function to determine the material gained from a given move
+        Citation: https://stackoverflow.com/questions/61778579/what-is-the-best-way-to-find-out-if-the-move-captured-a-piece-in-python-chess
+        """
         if board.is_capture(move):
             if board.is_en_passant(move):
                 return chess.PAWN
@@ -17,6 +19,9 @@ class GreedyAgent():
         return 0
 
     def play(self, board):
+        """
+        Driver function to determine and make the best move
+        """
         legal_moves = list(board.legal_moves)
         max_material = 0
         best_move = None

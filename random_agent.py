@@ -7,7 +7,9 @@ class RandomAgent():
         self.color = color
 
     def play(self, board):
+        """
+        Driver function to determine and make the best move
+        """
         legal_moves = list(board.legal_moves)
         move = random.choice(legal_moves)
-        # print(move)
         board.push(move)
