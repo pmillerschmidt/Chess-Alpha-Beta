@@ -16,7 +16,6 @@ def compare_policies(P1, P2, simulations):
 def play_game(P1, P2):
     board = chess.Board()
     while not board.is_game_over(): 
-        print(board)
         if board.turn == P1.color:
             P1.play(board)
         else:
@@ -26,7 +25,7 @@ def play_game(P1, P2):
     return result
 
 def main():
-    P1 = MinimaxAgent(chess.WHITE, 3)
+    P1 = MinimaxAgent(chess.WHITE, 4)
     P2 = GreedyAgent(chess.BLACK)
     result = compare_policies(P1, P2, 1)
     print(result)
