@@ -19,20 +19,39 @@ class MinimaxAgent():
     
     # what is the material balance
     # from StackOverflow
-    def material_balance(self, board):
-        white = board.occupied_co[chess.WHITE]
-        black = board.occupied_co[chess.BLACK]
-        return (
-            chess.popcount(white & board.pawns) - chess.popcount(black & board.pawns) +
-            3 * (chess.popcount(white & board.knights) - chess.popcount(black & board.knights)) +
-            3 * (chess.popcount(white & board.bishops) - chess.popcount(black & board.bishops)) +
-            5 * (chess.popcount(white & board.rooks) - chess.popcount(black & board.rooks)) +
-            9 * (chess.popcount(white & board.queens) - chess.popcount(black & board.queens)))
+    # def material_balance(self, board):
+    #     white = board.occupied_co[chess.WHITE]
+    #     black = board.occupied_co[chess.BLACK]
+    #     return (
+    #         chess.popcount(white & board.pawns) - chess.popcount(black & board.pawns) +
+    #         3 * (chess.popcount(white & board.knights) - chess.popcount(black & board.knights)) +
+    #         3 * (chess.popcount(white & board.bishops) - chess.popcount(black & board.bishops)) +
+    #         5 * (chess.popcount(white & board.rooks) - chess.popcount(black & board.rooks)) +
+    #         9 * (chess.popcount(white & board.queens) - chess.popcount(black & board.queens)))
     
+    def material_balance(self, board):
+        wp = len(board.pieces(chess.PAWN, chess.WHITE))
+        bp = len(board.pieces(chess.PAWN, chess.BLACK))
+
+        wn = len(board.pieces(chess.KNIGHT, chess.WHITE))
+        bn = len(board.pieces(chess.KNIGHT, chess.BLACK))
+
+        wb = len(board.pieces(chess.BISHOP, chess.WHITE))
+        bb = len(board.pieces(chess.BISHOP, chess.BLACK))
+
+        wr = len(board.pieces(chess.ROOK, chess.WHITE))
+        br = len(board.pieces(chess.ROOK, chess.BLACK))
+
+        wq = len(board.pieces(chess.QUEEN, chess.WHITE))
+        bq = len(board.pieces(chess.QUEEN, chess.BLACK))
+        evaluation = 1*(wp - bp) + 3.2*(wn - bn) + 3.3*(wb - bb) + 5*(wr - br) + 9*(wq - bq)
+
+        return evaluation
+        
     # heuristic function 
     def heuristic(self, board, player):
         if board.is_checkmate():
-            reward = 100 if player == chess.WHITE else -100
+            reward = 1000 if player == chess.BLACK else -1000
         elif board.is_stalemate() or board.is_insufficient_material():
             reward = 0
         else:
@@ -42,6 +61,7 @@ class MinimaxAgent():
     
     def minimax(self, board, player, depth):
         if depth == 0 or board.is_game_over():
+            # print(self.heuristic(board, player))
             return (None, self.heuristic(board, player))
 
         if player == chess.WHITE:
