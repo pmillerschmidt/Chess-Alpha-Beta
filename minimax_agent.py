@@ -63,6 +63,9 @@ class MinimaxAgent():
                     best_move = move
                     alpha = max(alpha, best_score)
                 board.pop()
+                if beta <= alpha:
+                    break
+                
             return (best_move, best_score)
 
         else:
@@ -76,6 +79,8 @@ class MinimaxAgent():
                     best_move = move
                     beta = min(beta, best_score)
                 board.pop()
+                if beta <= alpha:
+                    break
 
             return (best_move, best_score)
             
