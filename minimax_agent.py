@@ -48,7 +48,7 @@ class MinimaxAgent():
         return reward
 
     
-    def minimax(self, board, player, depth):
+    def minimax(self, board, player, depth, alpha, beta):
         if depth == 0 or board.is_game_over():
             return (None, self.heuristic(board, player))
 
@@ -56,12 +56,12 @@ class MinimaxAgent():
             best_score, best_move = float('-inf'), None
             for move in board.legal_moves:
                 board.push(move)
-                score = self.minimax(board, chess.BLACK, depth - 1)
+                score = self.minimax(board, chess.BLACK, depth - 1, alpha, beta)
 
                 if score[1] > best_score:
                     best_score = score[1]
                     best_move = move
-                # pop the last move 
+                    alpha = max(alpha, best_score)
                 board.pop()
             return (best_move, best_score)
 
@@ -69,16 +69,17 @@ class MinimaxAgent():
             best_score, best_move = float('inf'), None
             for move in board.legal_moves:
                 board.push(move)
-                score = self.minimax(board, chess.WHITE, depth - 1)
+                score = self.minimax(board, chess.WHITE, depth - 1, alpha, beta)
                 
                 if score[1] < best_score:
                     best_score = score[1]
                     best_move = move
+                    beta = min(beta, best_score)
                 board.pop()
 
             return (best_move, best_score)
             
         
     def play(self, board):
-        move = self.minimax(board, self.color, self.depth)[0]
+        move = self.minimax(board, self.color, self.depth, float('-inf'), float('inf'))[0]
         board.push(move)
