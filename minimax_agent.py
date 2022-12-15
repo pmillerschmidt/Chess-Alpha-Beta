@@ -3,9 +3,9 @@ import random
 
 class MinimaxAgent():
 
-    def __init__(self, color, depth_limit):
+    def __init__(self, color, depth):
         self.color = color
-        self.depth_limit = depth_limit
+        self.depth = depth
 
     # what material is gained from this move
     # function from StackOverflow 
@@ -31,9 +31,8 @@ class MinimaxAgent():
     
     # heuristic function 
     def heuristic(self, board, player):
-        # if the game ends in checkmate, return very high evaluation
         if board.is_checkmate():
-            reward = 500 if player == chess.WHITE else -500
+            reward = 100 if player == chess.WHITE else -100
         elif board.is_stalemate() or board.is_insufficient_material():
             reward = 0
         else:
@@ -41,33 +40,33 @@ class MinimaxAgent():
         return reward
 
     
-    def minimax(self, board, player, depth, depth_limit):
-        # if depth is 0, return the evaluation
-        if depth == 0:
-            return self.heuristic(board, player)
+    def minimax(self, board, player, depth):
+        if depth == 0 or board.is_game_over():
+            return (None, self.heuristic(board, player))
 
-        # if its white's turn
-        if player==chess.WHITE:
-            evaluations = []
+        if player == chess.WHITE:
+            best_score, best_move = float('-inf'), None
             for move in board.legal_moves:
                 board.push(move)
-                evaluations.append((move, self.minimax(board, chess.BLACK, depth - 1, depth_limit)))
+                score = self.minimax(board, chess.BLACK, depth - 1)
+                if score[1] > best_score:
+                    best_score = score[1]
+                    best_move = move
                 board.pop()
-            return max(evaluations, key = lambda x: x[1])
-        # if its black's turn
+            return (best_move, best_score)
+
         else:
-            evaluations = []
+            best_score, best_move = float('inf'), None
             for move in board.legal_moves:
                 board.push(move)
-                evaluations.append((move, self.minimax(board, chess.WHITE, depth - 1, depth_limit)))
+                score = self.minimax(board, chess.WHITE, depth - 1)
+                if score[1] < best_score:
+                    best_score = score[1]
+                    best_move = move
                 board.pop()
-            return min(evaluations, key = lambda x: x[1])
-
+            return (best_move, best_score)
+            
         
     def play(self, board):
-        move = self.minimax(board, self.color, self.depth_limit, self.depth_limit)[0]
+        move = self.minimax(board, self.color, self.depth)[0]
         board.push(move)
-        
-
-
-

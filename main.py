@@ -3,7 +3,6 @@ from random_agent import RandomAgent
 from greedy_agent import GreedyAgent
 from minimax_agent import MinimaxAgent
 
-
 def compare_policies(P1, P2, simulations):
     white_wins = draws = black_wins = 0
     for i in range(simulations):
@@ -12,21 +11,11 @@ def compare_policies(P1, P2, simulations):
         elif result.winner == False: black_wins += 1
         else: draws += 1
 
-    # returns white wins, draws, and black wins
-    return (white_wins, draws, black_wins)
-    
+    return (white_wins, draws, black_wins)  
 
 def play_game(P1, P2):
     board = chess.Board()
-    game_over = False
-    # while not board.is_checkmate():
-    while not game_over: 
-        # if its checkmate
-        if board.is_checkmate() or board.is_stalemate() or board.is_insufficient_material():
-            game_over = True
-            break
-
-        # if its whites turn 
+    while not board.is_game_over(): 
         if board.turn == P1.color:
             P1.play(board)
         else:
@@ -36,14 +25,10 @@ def play_game(P1, P2):
     return result
 
 def main():
-
-    P1 = MinimaxAgent(chess.WHITE, 10)
+    P1 = MinimaxAgent(chess.WHITE, 3)
     P2 = RandomAgent(chess.BLACK)
     result = compare_policies(P1, P2, 1)
     print(result)
     
-        
-
-
 if __name__ == "__main__":
     main()
