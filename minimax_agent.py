@@ -57,9 +57,11 @@ class MinimaxAgent():
             for move in board.legal_moves:
                 board.push(move)
                 score = self.minimax(board, chess.BLACK, depth - 1)
+
                 if score[1] > best_score:
                     best_score = score[1]
                     best_move = move
+                # pop the last move 
                 board.pop()
             return (best_move, best_score)
 
@@ -68,10 +70,12 @@ class MinimaxAgent():
             for move in board.legal_moves:
                 board.push(move)
                 score = self.minimax(board, chess.WHITE, depth - 1)
+                
                 if score[1] < best_score:
                     best_score = score[1]
                     best_move = move
                 board.pop()
+
             return (best_move, best_score)
             
         
