@@ -37,7 +37,7 @@ def play_game(P1, P2):
 
 def main():
 
-    P1 = MinimaxAgent(chess.WHITE, 15)
+    P1 = MinimaxAgent(chess.WHITE, 10)
     P2 = RandomAgent(chess.BLACK)
     result = compare_policies(P1, P2, 1)
     print(result)

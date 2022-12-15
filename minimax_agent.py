@@ -36,7 +36,7 @@ class MinimaxAgent():
 
     
     def minimax(self, board, player, depth, depth_limit):
-        print(board)
+        # print(board)
         # if the game ends in checkmate, return very high evaluation
         if board.is_checkmate():
             return 500 if player==chess.WHITE else -500
@@ -45,7 +45,7 @@ class MinimaxAgent():
         
         # if depth is 0, return the evaluation
         if depth == 0:
-            print(self.heuristic(board))
+            # print(self.heuristic(board))
             return self.heuristic(board)
 
         # if its white's turn
