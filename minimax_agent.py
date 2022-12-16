@@ -49,7 +49,7 @@ class MinimaxAgent():
             evaluation += PSE.KING[piece]
         # normalize to easier values 
         evaluation = evaluation / 100
-        # print(evaluation)
+        print(evaluation)
         return evaluation
 
         
@@ -64,6 +64,7 @@ class MinimaxAgent():
             reward = 0
         else:
             reward = self.material_balance(board) 
+            # reward = self.piece_square_evaluation(board, player)
         return reward
 
     

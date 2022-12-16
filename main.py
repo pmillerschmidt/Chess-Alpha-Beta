@@ -22,7 +22,7 @@ def play_game(P1, P2):
     """
     board = chess.Board()
     while not board.is_game_over(): 
-        print(board)
+        # print(board)
         if board.turn == P1.color:
             P1.play(board)
         else:
@@ -35,8 +35,8 @@ def main():
     """
     Driver function for main program execution
     """
-    P1 = MinimaxAgent(chess.WHITE, 4)
-    P2 = GreedyAgent(chess.BLACK)
+    P1 = MinimaxAgent(chess.BLACK, 4)
+    P2 = MinimaxAgent(chess.WHITE, 2)
     result = compare_policies(P1, P2, 1)
     print(result)
     
