@@ -5,16 +5,13 @@ import math
 from copy import deepcopy
 
 class Node:
-
     def __init__(self, board, score = 0, visits = 0, root = False):
         self.board = board
         self.score = score
         self.visits = visits
         self.root = root
-    
 
 class mctsAgent():
-
     def __init__(self, color, time):
         self.color = color
         self.cpu_time = time
@@ -24,9 +21,7 @@ class mctsAgent():
             reward = 500 if board.turn == chess.BLACK else -500
         elif board.is_stalemate() or board.is_insufficient_material():
             reward = 0
-        else:
-            reward = 0
-
+        
         return reward
 
     def rollout(self, node):
@@ -75,7 +70,6 @@ class mctsAgent():
 
         return tree[best_move.fen()]
              
-
     def recurse(self, node, tree):
         """
         Function to recurse through the game tree, expanding when necessary
@@ -119,7 +113,6 @@ class mctsAgent():
                 max_visits = visits
                 best_move = move
         return best_move
-
 
     def play(self, board):
         """

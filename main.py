@@ -2,7 +2,6 @@ import chess
 from random_agent import RandomAgent
 from greedy_agent import GreedyAgent
 from minimax_agent import MinimaxAgent
-from mcts_agent import mctsAgent
 
 def compare_policies(P1, P2, simulations):
     """
@@ -42,3 +41,4 @@ def main():
     
 if __name__ == "__main__":
     main()
+    
