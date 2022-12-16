@@ -2,6 +2,7 @@ import chess
 from random_agent import RandomAgent
 from greedy_agent import GreedyAgent
 from minimax_agent import MinimaxAgent
+from mcts_agent import mctsAgent
 
 def compare_policies(P1, P2, simulations):
     """
@@ -22,7 +23,6 @@ def play_game(P1, P2):
     """
     board = chess.Board()
     while not board.is_game_over(): 
-        print(board)
         if board.turn == P1.color:
             P1.play(board)
         else:
