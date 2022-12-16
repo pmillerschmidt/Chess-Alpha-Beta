@@ -2,7 +2,6 @@ import chess
 import random
 
 class GreedyAgent():
-
     def __init__(self, color):
         self.color = color
 
