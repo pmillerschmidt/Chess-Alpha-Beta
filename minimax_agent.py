@@ -25,8 +25,8 @@ class MinimaxAgent():
         Function that calculates the material balance of the board (white pieces - black pieces)
         """
         w_balance, b_balance = 0, 0
-        pieces = [(1, chess.PAWN), (3.2, chess.KNIGHT),
-                  (3.3, chess.BISHOP), (5, chess.ROOK), (9, chess.QUEEN)]
+        pieces = [(1, chess.PAWN), (3.1, chess.KNIGHT),
+                  (3.2, chess.BISHOP), (4.5, chess.ROOK), (9, chess.QUEEN)]
 
         for piece in pieces:
             w_balance += piece[0] * len(board.pieces(piece[1], chess.WHITE))
@@ -42,33 +42,33 @@ class MinimaxAgent():
         evaluation = 0
         # # do something different for black? Do I need to flip the board
         for piece in board.pieces(chess.PAWN, player):
-            evaluation += PSE.PAWN[piece]
+            evaluation = evaluation + PSE.W_PAWN[piece] if player == chess.WHITE else evaluation - PSE.B_PAWN[piece]
         for piece in board.pieces(chess.KNIGHT, player):
-            evaluation += PSE.KNIGHT[piece]
+            evaluation = evaluation + PSE.W_KNIGHT[piece] if player == chess.WHITE else evaluation - PSE.B_KNIGHT[piece]
         for piece in board.pieces(chess.BISHOP, player):
-            evaluation += PSE.BISHOP[piece]
+            evaluation = evaluation + PSE.W_BISHOP[piece] if player == chess.WHITE else evaluation - PSE.B_BISHOP[piece]
         for piece in board.pieces(chess.QUEEN, player):
-            evaluation += PSE.QUEEN[piece]
+            evaluation = evaluation + PSE.W_QUEEN[piece] if player == chess.WHITE else evaluation - PSE.B_QUEEN[piece]
         for piece in board.pieces(chess.KING, player):
-            evaluation += PSE.KING[piece]
-        # normalize to easier values
-        # maybe we can change this normalization to a value between [0, 1]
-        evaluation = evaluation / 100
-        print(evaluation)
-        return evaluation
+            evaluation = evaluation + PSE.W_KING[piece] if player == chess.WHITE else evaluation - PSE.B_KING[piece]
+        # normalize 
+        return evaluation / 1000
 
     def heuristic(self, board, player):
         """
         Heuristic function to determine the value of a given board position
         """
-
+        # coefficients for material balance, piece-square evaluation
+        mbc = 1
+        psec = 4
+        
         if board.is_checkmate():
             reward = 500 if player == chess.BLACK else -500
         elif board.is_stalemate() or board.is_insufficient_material():
             reward = 0
         else:
-            reward = self.material_balance(board)
-            # reward = self.piece_square_evaluation(board, player)
+            reward = mbc * self.material_balance(board) + psec * self.piece_square_evaluation(board, player)
+            # print(reward)
         return reward
 
     def minimax(self, board, player, depth, alpha, beta):
