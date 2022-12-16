@@ -77,9 +77,12 @@ class MinimaxAgent():
         if depth == 0 or board.is_game_over():
             return (None, self.heuristic(board, player))
 
+        legal_moves = list(board.legal_moves)
+        random.shuffle(legal_moves)
+
         if player == chess.WHITE:
             best_score, best_move = float('-inf'), None
-            for move in board.legal_moves:
+            for move in legal_moves:
                 board.push(move)
                 score = self.minimax(board, chess.BLACK, depth - 1, alpha, beta)
 
@@ -96,7 +99,7 @@ class MinimaxAgent():
 
         else:
             best_score, best_move = float('inf'), None
-            for move in board.legal_moves:
+            for move in legal_moves:
                 board.push(move)
                 score = self.minimax(board, chess.WHITE, depth - 1, alpha, beta)
 
