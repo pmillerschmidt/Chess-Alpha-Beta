@@ -26,10 +26,10 @@ def play_game(P1, P2):
     """
     fen = 'rnbqkb1r/ppp1pppp/5n2/3p4/3P4/5NP1/PPP1PP1P/RNBQKB1R b KQkq - 0 3'
     fen2 = 'rnbqkb1r/ppp1ppp1/5n2/3p3p/3P4/5NP1/PPP1PP1P/RNBQKB1R w KQkq - 0 4'
-    board = chess.Board(fen)
+    board = chess.Board()
     # Initialization
     game_board = display.start()
-    display.update(fen, game_board)
+    # display.update(fen, game_board)
 
     while not board.is_game_over() and not display.check_for_quit(): 
         if board.turn == P1.color:
@@ -49,10 +49,13 @@ def main():
     """
     Driver function for main program execution
     """
-    P1 = MinimaxAgent(chess.WHITE, 4)
-    P2 = RandomAgent(chess.BLACK)
+
+    P1 = MinimaxAgent(chess.WHITE, 4, "gm2001.bin")
+    P2 = GreedyAgent(chess.BLACK)
     result = compare_policies(P1, P2, 1)
     print(result)
+    
+    
     
 if __name__ == "__main__":
     main()

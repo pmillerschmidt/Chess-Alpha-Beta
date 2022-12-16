@@ -1,12 +1,14 @@
 import random
 import chess
+import chess.polyglot
 import PSE
 
 
 class MinimaxAgent():
-    def __init__(self, color, depth):
+    def __init__(self, color, depth, ob):
         self.color = color
         self.depth = depth
+        self.opening_book = chess.polyglot.open_reader(ob)
 
     def material_gained(self, board, move):
         """
@@ -64,7 +66,7 @@ class MinimaxAgent():
         
         if board.is_checkmate():
             reward = 500 if player == chess.BLACK else -500
-        elif board.is_stalemate() or board.is_insufficient_material():
+        elif board.is_stalemate() or board.is_insufficient_material() or board.is_fivefold_repetition():
             reward = 0
         else:
             reward = mbc * self.material_balance(board) + psec * self.piece_square_evaluation(board, player)
@@ -119,5 +121,13 @@ class MinimaxAgent():
         """
         Driver function to determine and make the best move
         """
-        move = self.minimax(board, self.color, self.depth, float('-inf'), float('inf'))[0]
+
+        # play book moves until there are none
+        if self.opening_book.get(board) != None:
+            move = self.opening_book.weighted_choice(board).move
+        
+        else: 
+            move = self.minimax(board, self.color, self.depth, float('-inf'), float('inf'))[0]
+        
+        #play the move
         board.push(move)
