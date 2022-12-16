@@ -35,6 +35,9 @@ class MinimaxAgent():
         return balance
     
     def piece_square_evaluation(self, board, player):
+        """
+        Function that evaluates the positional strength of a player's pieces
+        """
         evaluation = 0
         # # do something different for black? Do I need to flip the board
         for piece in board.pieces(chess.PAWN, player):
@@ -47,7 +50,8 @@ class MinimaxAgent():
             evaluation += PSE.QUEEN[piece]
         for piece in board.pieces(chess.KING, player):
             evaluation += PSE.KING[piece]
-        # normalize to easier values 
+        # normalize to easier values
+        # maybe we can change this normalization to a value between [0, 1] 
         evaluation = evaluation / 100
         # print(evaluation)
         return evaluation
