@@ -21,6 +21,19 @@ class MinimaxAgent():
             else:
                 return board.piece_at(move.to_square).piece_type
         return 0
+    def material_count(self, board):
+        """
+        Function that calculates the material balance of the board (white pieces - black pieces)
+        """
+        count = 0
+        pieces = [(1, chess.PAWN), (3.1, chess.KNIGHT),
+                  (3.2, chess.BISHOP), (4.5, chess.ROOK), (9, chess.QUEEN)]
+
+        for piece in pieces:
+            count += piece[0] * len(board.pieces(piece[1], chess.WHITE))
+            count += piece[0] * len(board.pieces(piece[1], chess.BLACK))
+
+        return count
 
     def material_balance(self, board):
         """
@@ -126,6 +139,10 @@ class MinimaxAgent():
         if self.opening_book.get(board) != None:
             move = self.opening_book.weighted_choice(board).move
         
+        # if we are in the endgame, up the depth
+        elif self.material_count(board) < 25:
+            move = self.minimax(board, self.color, self.depth + 2, float('-inf'), float('inf'))[0]
+            
         else: 
             move = self.minimax(board, self.color, self.depth, float('-inf'), float('inf'))[0]
         

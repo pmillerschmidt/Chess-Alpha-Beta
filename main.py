@@ -24,24 +24,21 @@ def play_game(P1, P2):
     """
     Function to make turns for each respective player while the game is active
     """
-    fen = 'rnbqkb1r/ppp1pppp/5n2/3p4/3P4/5NP1/PPP1PP1P/RNBQKB1R b KQkq - 0 3'
-    fen2 = 'rnbqkb1r/ppp1ppp1/5n2/3p3p/3P4/5NP1/PPP1PP1P/RNBQKB1R w KQkq - 0 4'
-    board = chess.Board()
+   
     # Initialization
     game_board = display.start()
+    board = chess.Board()
     # display.update(fen, game_board)
 
-    while not board.is_game_over() and not display.check_for_quit(): 
-        if board.turn == P1.color:
-            P1.play(board)
-        else:
-            P2.play(board)
+    while not board.is_game_over() and not display.check_for_quit():
+
+        # play the game
+        P1.play(board) if board.turn == P1.color else P2.play(board)
         # update the display
         display.update(board.fen(), game_board)
 
+    # finish up 
     display.update(board.fen(), game_board)
-    sleep(5)
-    display.terminate()
     result = board.outcome()
     return result
 
@@ -51,7 +48,7 @@ def main():
     """
 
     P1 = MinimaxAgent(chess.WHITE, 4, "gm2001.bin")
-    P2 = GreedyAgent(chess.BLACK)
+    P2 = GreedyAgent(chess.BLACK, "gm2001.bin")
     result = compare_policies(P1, P2, 1)
     print(result)
     

@@ -2,8 +2,9 @@ import chess
 import random
 
 class GreedyAgent():
-    def __init__(self, color):
+    def __init__(self, color, ob):
         self.color = color
+        self.opening_book = chess.polyglot.open_reader(ob)
 
     def material_gained(self, board, move):
         """
@@ -24,15 +25,21 @@ class GreedyAgent():
         legal_moves = list(board.legal_moves)
         max_material = 0
         best_move = None
-        # go through moves, choose one with the most material gain
-        for move in legal_moves:
-            if self.material_gained(board, move) > max_material:
-                max_material = self.material_gained(board, move)
-                best_move = move
 
-        # if no move is best
-        if max_material == 0:
-            best_move = random.choice(legal_moves)
+        # play book moves until there are none
+        if self.opening_book.get(board) != None:
+            best_move = self.opening_book.weighted_choice(board).move
+
+        else:
+            # go through moves, choose one with the most material gain
+            for move in legal_moves:
+                if self.material_gained(board, move) > max_material:
+                    max_material = self.material_gained(board, move)
+                    best_move = move
+
+            # if no move is best
+            if max_material == 0:
+                best_move = random.choice(legal_moves)
 
         board.push(best_move)
 
