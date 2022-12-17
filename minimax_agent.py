@@ -9,6 +9,7 @@ class MinimaxAgent():
         self.color = color
         self.depth = depth
         self.opening_book = chess.polyglot.open_reader(ob)
+        self.tt = {}
 
     def material_gained(self, board, move):
         """
@@ -101,7 +102,10 @@ class MinimaxAgent():
         Minimax algorithm with alpha-beta pruning
         """
         if depth == 0 or board.is_game_over():
-            return (None, self.heuristic(board, player))
+            if board.fen() not in self.tt:
+                self.tt[board.fen()] = self.heuristic(board, player)
+
+            return (None, self.tt[board.fen()])
 
         legal_moves = list(board.legal_moves)
         random.shuffle(legal_moves)
@@ -151,7 +155,7 @@ class MinimaxAgent():
         
         # if we are in the endgame, up the depth
         elif self.material_count(board) < 25:
-            move = self.minimax(board, self.color, self.depth + 2, float('-inf'), float('inf'))[0]
+            move = self.minimax(board, self.color, self.depth + 1, float('-inf'), float('inf'))[0]
 
         else: 
             move = self.minimax(board, self.color, self.depth, float('-inf'), float('inf'))[0]
