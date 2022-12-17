@@ -21,9 +21,10 @@ class MinimaxAgent():
             else:
                 return board.piece_at(move.to_square).piece_type
         return 0
+
     def material_count(self, board):
         """
-        Function that calculates the material balance of the board (white pieces - black pieces)
+        Function that calculates the material count of the board 
         """
         count = 0
         pieces = [(1, chess.PAWN), (3.1, chess.KNIGHT),
@@ -68,6 +69,15 @@ class MinimaxAgent():
             evaluation = evaluation + PSE.W_KING[piece] if player == chess.WHITE else evaluation - PSE.B_KING[piece]
         # normalize 
         return evaluation / 1000
+    
+    # attacked heuristic, sees if the position is being attacked
+    # def attacked(self, board, player):
+    #     color = 1 if player == chess.WHITE else -1
+
+    #     if board.is_check():
+    #         return color * 2
+
+
 
     def heuristic(self, board, player):
         """
@@ -75,7 +85,7 @@ class MinimaxAgent():
         """
         # coefficients for material balance, piece-square evaluation
         mbc = 1
-        psec = 8
+        psec = 6
         
         if board.is_checkmate():
             reward = 500 if player == chess.BLACK else -500
