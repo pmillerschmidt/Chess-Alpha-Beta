@@ -95,6 +95,27 @@ class MinimaxAgent():
             reward = mbc * self.material_balance(board) + psec * self.piece_square_evaluation(board, player)
 
         return reward
+    
+  
+    # endgame heuristic - when one side is very winning
+    # see if the position is attacking/defending (checks)
+    # see how mobile the king is 
+    def endgame_heuristic(self, board, player):
+        """
+        Heuristic function to determine the value of a given board position
+        """
+        # coefficients for material balance, piece-square evaluation
+        mbc = 1
+        psec = 6
+        
+        if board.is_checkmate():
+            reward = 500 if player == chess.BLACK else -500
+        elif board.is_stalemate() or board.is_insufficient_material() or board.is_fivefold_repetition():
+            reward = 0
+        else:
+            reward = mbc * self.material_balance(board) + psec * self.piece_square_evaluation(board, player)
+
+        return reward
 
     def minimax(self, board, player, depth, alpha, beta):
         """
@@ -128,7 +149,7 @@ class MinimaxAgent():
                 board.pop()
                 if beta <= alpha:
                     break
-                
+
             self.tt[board.fen()] = (best_move, best_score)
             return (best_move, best_score)
 
