@@ -100,11 +100,16 @@ class MinimaxAgent():
         """
         Minimax algorithm with alpha-beta pruning
         """
+
+        # if its in the transposition table, return it 
+        if board.fen() in self.tt:
+            return self.tt[board.fen()]
+
         if depth == 0 or board.is_game_over():
             if board.fen() not in self.tt:
-                self.tt[board.fen()] = self.heuristic(board, player)
+                self.tt[board.fen()] = (None, self.heuristic(board, player))
 
-            return (None, self.tt[board.fen()])
+            return self.tt[board.fen()]
 
         legal_moves = list(board.legal_moves)
         random.shuffle(legal_moves)
@@ -123,7 +128,8 @@ class MinimaxAgent():
                 board.pop()
                 if beta <= alpha:
                     break
-
+                
+            self.tt[board.fen()] = (best_move, best_score)
             return (best_move, best_score)
 
         else:
@@ -141,6 +147,7 @@ class MinimaxAgent():
                 if beta <= alpha:
                     break
 
+            self.tt[board.fen()] = (best_move, best_score)
             return (best_move, best_score)
 
     def play(self, board):
