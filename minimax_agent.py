@@ -75,7 +75,7 @@ class MinimaxAgent():
         """
         # coefficients for material balance, piece-square evaluation
         mbc = 1
-        psec = 4
+        psec = 8
         
         if board.is_checkmate():
             reward = 500 if player == chess.BLACK else -500
@@ -142,7 +142,7 @@ class MinimaxAgent():
         # if we are in the endgame, up the depth
         elif self.material_count(board) < 25:
             move = self.minimax(board, self.color, self.depth + 2, float('-inf'), float('inf'))[0]
-            
+
         else: 
             move = self.minimax(board, self.color, self.depth, float('-inf'), float('inf'))[0]
         
