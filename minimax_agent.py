@@ -79,7 +79,6 @@ class MinimaxAgent():
     #         return color * 2
 
 
-
     def heuristic(self, board, player):
         """
         Heuristic function to determine the value of a given board position
@@ -94,7 +93,7 @@ class MinimaxAgent():
             reward = 0
         else:
             reward = mbc * self.material_balance(board) + psec * self.piece_square_evaluation(board, player)
-            # print(reward)
+
         return reward
 
     def minimax(self, board, player, depth, alpha, beta):
@@ -111,7 +110,7 @@ class MinimaxAgent():
         random.shuffle(legal_moves)
 
         if player == chess.WHITE:
-            best_score, best_move = float('-inf'), None
+            best_score, best_move = alpha, None
             for move in legal_moves:
                 board.push(move)
                 score = self.minimax(board, chess.BLACK, depth - 1, alpha, beta)
@@ -128,7 +127,7 @@ class MinimaxAgent():
             return (best_move, best_score)
 
         else:
-            best_score, best_move = float('inf'), None
+            best_score, best_move = beta, None
             for move in legal_moves:
                 board.push(move)
                 score = self.minimax(board, chess.WHITE, depth - 1, alpha, beta)
@@ -148,17 +147,15 @@ class MinimaxAgent():
         """
         Driver function to determine and make the best move
         """
-
         # play book moves until there are none
         if self.opening_book.get(board) != None:
             move = self.opening_book.weighted_choice(board).move
         
         # if we are in the endgame, up the depth
-        elif self.material_count(board) < 25:
-            move = self.minimax(board, self.color, self.depth + 1, float('-inf'), float('inf'))[0]
+        elif self.material_count(board) < 15:
+            move = self.minimax(board, self.color, self.depth + 3, float('-inf'), float('inf'))[0]
 
         else: 
             move = self.minimax(board, self.color, self.depth, float('-inf'), float('inf'))[0]
         
-        #play the move
         board.push(move)
