@@ -101,7 +101,7 @@ class ScoutAgent():
         ordered_moves = self.order_moves(board)
         next_player = chess.BLACK if player == chess.WHITE else chess.WHITE
 
-        best_score = alpha if player == chess.WHITE else beta
+        best_score = float('-inf') if player == chess.WHITE else float('inf')
         best_move = None
 
         for move, heuristic in ordered_moves:
