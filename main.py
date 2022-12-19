@@ -43,7 +43,7 @@ def main():
     Driver function for main program execution
     """
     P1 = ScoutAgent(chess.WHITE, 3, "gm2001.bin")
-    P2 = GreedyAgent(chess.BLACK, "gm2001.bin")
+    P2 = MinimaxAgent(chess.BLACK, 3, "gm2001.bin")
     result = compare_policies(P1, P2, 1)
     print(result)
     
