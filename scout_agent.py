@@ -114,6 +114,8 @@ class ScoutAgent():
                     score = self.scout(board, next_player, depth - 1, alpha, alpha + 1)
                 elif beta != float('inf'):
                     score = self.scout(board, next_player, depth - 1, beta - 1, beta)
+                else:
+                    score = self.scout(board, next_player, depth - 1, alpha, beta)
                 if alpha < score[1] < beta:
                     score = self.scout(board, next_player, depth - 1, score[1], beta)
             board.pop()
