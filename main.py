@@ -20,11 +20,11 @@ def read_args():
     parser.add_argument('--viz', action = 'store_true', default = False)
     args = parser.parse_args()
 
-    P1 = args.P1
-    P2 = args.P2
+    player1 = args.P1
+    player2 = args.P2
     num_games = args.games
     visualize = args.viz
-    return (P1, P2, num_games, visualize)
+    return (player1, player2, num_games, visualize)
 
 def assign_player(player_color, player_type):
     if player_type == "greedy":
