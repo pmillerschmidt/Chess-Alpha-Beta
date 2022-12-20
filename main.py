@@ -1,3 +1,4 @@
+import time
 import contextlib
 import argparse
 from random_agent import RandomAgent
@@ -27,6 +28,9 @@ def read_args():
     return (player1, player2, num_games, visualize)
 
 def assign_player(player_color, player_type):
+    """
+    Function to assign player types
+    """
     if player_type == "greedy":
         return GreedyAgent(player_color, "gm2001.bin")
     if player_type == "random":
@@ -35,6 +39,17 @@ def assign_player(player_color, player_type):
         return MinimaxAgent(player_color, 3, "gm2001.bin")
     if player_type == "scout":
         return ScoutAgent(player_color, 3, "gm2001.bin")
+
+def parse_result(result, time):
+    """
+    Function to format and print the results
+    """
+    print("-----------")
+    print(f"Player 1 wins: {result[0]}")
+    print(f"Player 2 wins: {result[2]}")
+    print(f"Draws / stalemates: {result[1]}")
+    print(f"Completed in {time:.2f} seconds")
+    print()
 
 def main():
     """
@@ -48,8 +63,10 @@ def main():
 
     if num_games == 1: print(f"Playing {1} game...")
     else: print(f"Playing {num_games} games...")
+    start = time.time()
     result = driver.compare_policies(P1, P2, num_games, visualize)
-    print(result)
+    end = time.time()
+    parse_result(result, end - start)
     
 if __name__ == "__main__":
     main()

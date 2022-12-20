@@ -18,7 +18,7 @@ class Driver():
         white_wins = draws = black_wins = 0
         for i in range(simulations):
             result = self.play_game_with_viz(P1, P2) if visualize else self.play_game(P1, P2)
-            print(f"{100 * (i + 1) / simulations}% done")
+            print(f"{int(100 * (i + 1) / simulations)}% done")
             if result.winner == True: white_wins += 1
             elif result.winner == False: black_wins += 1
             else: draws += 1
