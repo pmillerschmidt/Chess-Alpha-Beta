@@ -40,11 +40,11 @@ def main():
     """
     Driver function for main program execution
     """
-    P1, P2, num_games, visualize = read_args()
+    player1, player2, num_games, visualize = read_args()
 
     driver = Driver()
-    P1 = assign_player(chess.WHITE, P1)
-    P2 = assign_player(chess.BLACK, P2)
+    P1 = assign_player(chess.WHITE, player1)
+    P2 = assign_player(chess.BLACK, player2)
 
     if num_games == 1: print(f"Playing {1} game...")
     else: print(f"Playing {num_games} games...")
