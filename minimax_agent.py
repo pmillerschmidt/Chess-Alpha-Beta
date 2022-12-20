@@ -122,14 +122,13 @@ class MinimaxAgent():
         """
 
         # if its in the transposition table, return it 
-        if board.fen() in self.tt:
-            return self.tt[board.fen()]
+        if (board.fen(), depth) in self.tt:
+            return self.tt[(board.fen(), depth)]
 
         if depth == 0 or board.is_game_over():
-            if board.fen() not in self.tt:
-                self.tt[board.fen()] = (None, self.heuristic(board, player))
+            self.tt[(board.fen(), depth)] = (None, self.heuristic(board, player))
 
-            return self.tt[board.fen()]
+            return self.tt[(board.fen(), depth)]
 
         legal_moves = list(board.legal_moves)
         random.shuffle(legal_moves)
@@ -149,7 +148,7 @@ class MinimaxAgent():
                 if beta <= alpha:
                     break
 
-            self.tt[board.fen()] = (best_move, best_score)
+            self.tt[(board.fen(), depth)] = (None, self.heuristic(board, player))
             return (best_move, best_score)
 
         else:
@@ -167,7 +166,7 @@ class MinimaxAgent():
                 if beta <= alpha:
                     break
 
-            self.tt[board.fen()] = (best_move, best_score)
+            self.tt[(board.fen(), depth)] = (None, self.heuristic(board, player))
             return (best_move, best_score)
 
     def play(self, board):
