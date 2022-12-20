@@ -30,7 +30,7 @@ def main():
 
     driver = Driver()
     P1 = ScoutAgent(chess.WHITE, 3, "gm2001.bin")
-    P2 = MinimaxAgent(chess.BLACK, 3, "gm2001.bin")
+    P2 = GreedyAgent(chess.BLACK, "gm2001.bin")
 
     if num_games == 1: print(f"Playing {1} game...")
     else: print(f"Playing {num_games} games...")

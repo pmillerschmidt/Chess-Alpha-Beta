@@ -172,16 +172,12 @@ class MinimaxAgent():
         """
         Driver function to determine and make the best move
         """
+        # play book moves until there are none
         if self.opening_book.get(board) != None:
             move = self.opening_book.weighted_choice(board).move
-        elif self.material_count(board) < 24:
-            move = self.minimax(board, self.color, self.depth + 1, float('-inf'), float('inf'))[0]
-        elif self.material_count(board) < 12:
-            move = self.minimax(board, self.color, self.depth + 3, float('-inf'), float('inf'))[0]
-        elif self.material_count(board) < 6:
-            move = self.minimax(board, self.color, self.depth + 5, float('-inf'), float('inf'))[0]
-
+        elif self.material_count(board) < 15:
+            move = self.minimax(board, self.color, self.depth + 2, float('-inf'), float('inf'))[0]
         else: 
             move = self.minimax(board, self.color, self.depth, float('-inf'), float('inf'))[0]
-        
+
         board.push(move)
