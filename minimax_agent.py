@@ -57,7 +57,6 @@ class MinimaxAgent():
         Function that evaluates the positional strength of a player's pieces
         """
         evaluation = 0
-        # # do something different for black? Do I need to flip the board
         for piece in board.pieces(chess.PAWN, player):
             evaluation = evaluation + PSE.W_PAWN[piece] if player == chess.WHITE else evaluation - PSE.B_PAWN[piece]
         for piece in board.pieces(chess.KNIGHT, player):
