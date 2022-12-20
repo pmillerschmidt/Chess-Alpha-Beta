@@ -8,7 +8,7 @@ class ScoutAgent():
         self.color = color
         self.depth = depth
         self.opening_book = chess.polyglot.open_reader(ob)
-        self.tt = {}
+        # self.tt = {}
 
     def material_count(self, board):
         """
@@ -46,16 +46,15 @@ class ScoutAgent():
         evaluation = 0
 
         for piece in board.pieces(chess.PAWN, player):
-            evaluation = evaluation + PSE.W_PAWN[piece] if player == chess.WHITE else evaluation - PSE.B_PAWN[piece]
+            evaluation += PSE.W_PAWN[piece] if player == chess.WHITE else -PSE.B_PAWN[piece]
         for piece in board.pieces(chess.KNIGHT, player):
-            evaluation = evaluation + PSE.W_KNIGHT[piece] if player == chess.WHITE else evaluation - PSE.B_KNIGHT[piece]
+            evaluation += PSE.W_KNIGHT[piece] if player == chess.WHITE else -PSE.B_KNIGHT[piece]
         for piece in board.pieces(chess.BISHOP, player):
-            evaluation = evaluation + PSE.W_BISHOP[piece] if player == chess.WHITE else evaluation - PSE.B_BISHOP[piece]
+            evaluation += PSE.W_BISHOP[piece] if player == chess.WHITE else -PSE.B_BISHOP[piece]
         for piece in board.pieces(chess.QUEEN, player):
-            evaluation = evaluation + PSE.W_QUEEN[piece] if player == chess.WHITE else evaluation - PSE.B_QUEEN[piece]
+            evaluation += PSE.W_QUEEN[piece] if player == chess.WHITE else -PSE.B_QUEEN[piece]
         for piece in board.pieces(chess.KING, player):
-            evaluation = evaluation + PSE.W_KING[piece] if player == chess.WHITE else evaluation - PSE.B_KING[piece]
-
+            evaluation += PSE.W_KING[piece] if player == chess.WHITE else -PSE.B_KING[piece]
         return evaluation / 1000
 
     def heuristic(self, board, player):
@@ -72,7 +71,6 @@ class ScoutAgent():
             reward = 0
         else:
             reward = mbc * self.material_balance(board) + psec * self.piece_square_evaluation(board, player)
-
         return reward
 
     def order_moves(self, board):
@@ -101,7 +99,7 @@ class ScoutAgent():
         ordered_moves = self.order_moves(board)
         next_player = chess.BLACK if player == chess.WHITE else chess.WHITE
 
-        best_score = float('-inf') if player == chess.WHITE else float('inf')
+        best_score = alpha if player == chess.WHITE else beta
         best_move = None
 
         for move, heuristic in ordered_moves:
@@ -114,8 +112,6 @@ class ScoutAgent():
                     score = self.scout(board, next_player, depth - 1, alpha, alpha + 1)
                 elif beta != float('inf'):
                     score = self.scout(board, next_player, depth - 1, beta - 1, beta)
-                else:
-                    score = self.scout(board, next_player, depth - 1, alpha, beta)
                 if alpha < score[1] < beta:
                     score = self.scout(board, next_player, depth - 1, score[1], beta)
             board.pop()
@@ -141,13 +137,14 @@ class ScoutAgent():
         """
         Driver function to determine and make the best move
         """
-
         if self.opening_book.get(board) != None:
             move = self.opening_book.weighted_choice(board).move
-        
-        elif self.material_count(board) < 15:
+        elif self.material_count(board) < 24:
+            move = self.scout(board, self.color, self.depth + 1, float('-inf'), float('inf'))[0]
+        elif self.material_count(board) < 12:
             move = self.scout(board, self.color, self.depth + 3, float('-inf'), float('inf'))[0]
-
+        elif self.material_count(board) < 6:
+            move = self.scout(board, self.color, self.depth + 5, float('-inf'), float('inf'))[0]
         else: 
             move = self.scout(board, self.color, self.depth, float('-inf'), float('inf'))[0]
         

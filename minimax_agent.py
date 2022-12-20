@@ -92,7 +92,6 @@ class MinimaxAgent():
             reward = 0
         else:
             reward = mbc * self.material_balance(board) + psec * self.piece_square_evaluation(board, player)
-
         return reward
     
   
@@ -104,7 +103,7 @@ class MinimaxAgent():
         Heuristic function to determine the value of a given board position
         """
         # coefficients for material balance, piece-square evaluation
-        mbc = 1
+        mbc = 3
         psec = 6
         
         if board.is_checkmate():
@@ -112,8 +111,8 @@ class MinimaxAgent():
         elif board.is_stalemate() or board.is_insufficient_material() or board.is_fivefold_repetition():
             reward = 0
         else:
-            reward = mbc * self.material_balance(board) + psec * self.piece_square_evaluation(board, player)
-
+            reward = mbc * self.material_balance(board)
+            #  + psec * self.piece_square_evaluation(board, player)
         return reward
 
     def minimax(self, board, player, depth, alpha, beta):
@@ -122,8 +121,8 @@ class MinimaxAgent():
         """
 
         # if its in the transposition table, return it 
-        if (board.fen(), depth) in self.tt:
-            return self.tt[(board.fen(), depth)]
+        # if (board.fen(), depth) in self.tt:
+        #     return self.tt[(board.fen(), depth)]
 
         if depth == 0 or board.is_game_over():
             self.tt[(board.fen(), depth)] = (None, self.heuristic(board, player))
@@ -173,13 +172,14 @@ class MinimaxAgent():
         """
         Driver function to determine and make the best move
         """
-        # play book moves until there are none
         if self.opening_book.get(board) != None:
             move = self.opening_book.weighted_choice(board).move
-        
-        # if we are in the endgame, up the depth
-        elif self.material_count(board) < 15:
+        elif self.material_count(board) < 24:
+            move = self.minimax(board, self.color, self.depth + 1, float('-inf'), float('inf'))[0]
+        elif self.material_count(board) < 12:
             move = self.minimax(board, self.color, self.depth + 3, float('-inf'), float('inf'))[0]
+        elif self.material_count(board) < 6:
+            move = self.minimax(board, self.color, self.depth + 5, float('-inf'), float('inf'))[0]
 
         else: 
             move = self.minimax(board, self.color, self.depth, float('-inf'), float('inf'))[0]

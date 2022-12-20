@@ -14,25 +14,29 @@ def read_args():
     Process command line arguments
     """
     parser = argparse.ArgumentParser(description = "Process arguments for Blotto")
+    parser.add_argument('--games', type = int, required = True)
     parser.add_argument('--viz', action = 'store_true', default = False)
     args = parser.parse_args()
-    return args.viz
+
+    num_games = args.games
+    visualize = args.viz
+    return (num_games, visualize)
 
 def main():
     """
     Driver function for main program execution
     """
-    visualize = read_args()
+    num_games, visualize = read_args()
 
     driver = Driver()
     P1 = ScoutAgent(chess.WHITE, 3, "gm2001.bin")
     P2 = MinimaxAgent(chess.BLACK, 3, "gm2001.bin")
 
-    print("Playing...")
-    result = driver.compare_policies(P1, P2, 1, visualize)
+    if num_games == 1: print(f"Playing {1} game...")
+    else: print(f"Playing {num_games} games...")
+    result = driver.compare_policies(P1, P2, num_games, visualize)
     print(result)
     
-
 if __name__ == "__main__":
     main()
     
