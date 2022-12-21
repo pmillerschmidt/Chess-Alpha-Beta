@@ -34,7 +34,7 @@ def assign_player(player_color, player_type):
     if player_type == "greedy":
         return GreedyAgent(player_color, "gm2001.bin")
     if player_type == "random":
-        return RandomAgent(player_color, "gm2001.bin")
+        return RandomAgent(player_color)
     if player_type == "minimax":
         return MinimaxAgent(player_color, 3, "gm2001.bin")
     if player_type == "scout":

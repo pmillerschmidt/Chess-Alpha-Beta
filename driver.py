@@ -29,14 +29,11 @@ class Driver():
         """
         Function to make turns for each respective player while the game is active
         """
-        # Initialization
         board = chess.Board()
 
-        # Play until game is over or has been quit
         while not board.is_game_over():
             P1.play(board) if board.turn == P1.color else P2.play(board)
 
-        # Finish up 
         result = board.outcome()
         return result
     
@@ -44,16 +41,13 @@ class Driver():
         """
         Function to make turns for each respective player while the game is active
         """
-        # Initialization
         game_board = display.start()
         board = chess.Board()
 
-        # Play until game is over or has been quit
         while not board.is_game_over() and not display.check_for_quit():
             P1.play(board) if board.turn == P1.color else P2.play(board)
             display.update(board.fen(), game_board)
 
-        # Finish up 
         display.update(board.fen(), game_board)
         result = board.outcome()
         return result

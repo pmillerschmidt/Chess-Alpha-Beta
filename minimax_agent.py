@@ -11,18 +11,6 @@ class MinimaxAgent():
         self.opening_book = chess.polyglot.open_reader(ob)
         self.tt = {}
 
-    def material_gained(self, board, move):
-        """
-        Function to determine the material gained from a given move
-        Citation: https://stackoverflow.com/questions/61778579/what-is-the-best-way-to-find-out-if-the-move-captured-a-piece-in-python-chess
-        """
-        if board.is_capture(move):
-            if board.is_en_passant(move):
-                return chess.PAWN
-            else:
-                return board.piece_at(move.to_square).piece_type
-        return 0
-
     def material_count(self, board):
         """
         Function that calculates the material count of the board 
@@ -67,22 +55,13 @@ class MinimaxAgent():
             evaluation = evaluation + PSE.W_QUEEN[piece] if player == chess.WHITE else evaluation - PSE.B_QUEEN[piece]
         for piece in board.pieces(chess.KING, player):
             evaluation = evaluation + PSE.W_KING[piece] if player == chess.WHITE else evaluation - PSE.B_KING[piece]
-        # normalize 
         return evaluation / 1000
-    
-    # attacked heuristic, sees if the position is being attacked
-    # def attacked(self, board, player):
-    #     color = 1 if player == chess.WHITE else -1
-
-    #     if board.is_check():
-    #         return color * 2
-
 
     def heuristic(self, board, player):
         """
         Heuristic function to determine the value of a given board position
         """
-        # coefficients for material balance, piece-square evaluation
+        # coefficients for material balance & piece-square evaluation
         mbc = 1
         psec = 6
         
@@ -93,41 +72,13 @@ class MinimaxAgent():
         else:
             reward = mbc * self.material_balance(board) + psec * self.piece_square_evaluation(board, player)
         return reward
-    
-  
-    # endgame heuristic - when one side is very winning
-    # see if the position is attacking/defending (checks)
-    # see how mobile the king is 
-    def endgame_heuristic(self, board, player):
-        """
-        Heuristic function to determine the value of a given board position
-        """
-        # coefficients for material balance, piece-square evaluation
-        mbc = 3
-        psec = 6
-        
-        if board.is_checkmate():
-            reward = 500 if player == chess.BLACK else -500
-        elif board.is_stalemate() or board.is_insufficient_material() or board.is_fivefold_repetition():
-            reward = 0
-        else:
-            reward = mbc * self.material_balance(board)
-            #  + psec * self.piece_square_evaluation(board, player)
-        return reward
 
     def minimax(self, board, player, depth, alpha, beta):
         """
         Minimax algorithm with alpha-beta pruning
         """
-
-        # if its in the transposition table, return it 
-        # if (board.fen(), depth) in self.tt:
-        #     return self.tt[(board.fen(), depth)]
-
         if depth == 0 or board.is_game_over():
-            self.tt[(board.fen(), depth)] = (None, self.heuristic(board, player))
-
-            return self.tt[(board.fen(), depth)]
+            return (None, self.heuristic(board, player))
 
         legal_moves = list(board.legal_moves)
         random.shuffle(legal_moves)
@@ -147,7 +98,6 @@ class MinimaxAgent():
                 if beta <= alpha:
                     break
 
-            self.tt[(board.fen(), depth)] = (None, self.heuristic(board, player))
             return (best_move, best_score)
 
         else:
@@ -165,14 +115,12 @@ class MinimaxAgent():
                 if beta <= alpha:
                     break
 
-            self.tt[(board.fen(), depth)] = (None, self.heuristic(board, player))
             return (best_move, best_score)
 
     def play(self, board):
         """
         Driver function to determine and make the best move
         """
-        # play book moves until there are none
         if self.opening_book.get(board) != None:
             move = self.opening_book.weighted_choice(board).move
         elif self.material_count(board) < 15:

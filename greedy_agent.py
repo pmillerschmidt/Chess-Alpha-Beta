@@ -26,7 +26,6 @@ class GreedyAgent():
         max_material = 0
         best_move = None
 
-        # play book moves until there are none
         if self.opening_book.get(board) != None:
             best_move = self.opening_book.weighted_choice(board).move
 
@@ -37,11 +36,8 @@ class GreedyAgent():
                     max_material = self.material_gained(board, move)
                     best_move = move
 
-            # if no move is best
+            # if no move is best, random choice
             if max_material == 0:
                 best_move = random.choice(legal_moves)
 
         board.push(best_move)
-
-
-

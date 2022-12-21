@@ -8,7 +8,6 @@ class ScoutAgent():
         self.color = color
         self.depth = depth
         self.opening_book = chess.polyglot.open_reader(ob)
-        self.tt = {}
 
     def material_count(self, board):
         """
@@ -62,7 +61,7 @@ class ScoutAgent():
         """
         Heuristic function to determine the value of a given board position
         """
-        # coefficients for material balance, piece-square evaluation
+        # coefficients for material balance & piece-square evaluation
         mbc = 1
         psec = 6
         
@@ -148,7 +147,3 @@ class ScoutAgent():
             move = self.scout(board, self.color, self.depth, float('-inf'), float('inf'))[0]
         
         board.push(move)
-
-
-
-    
