@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Chessboard from 'chessboardjsx';
 import axios from 'axios';
 
+// Async delay function
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 function ChessGame() {
   const [position, setPosition] = useState('start');
   const [boardWidth, setBoardWidth] = useState(600);
@@ -9,15 +12,15 @@ function ChessGame() {
   const [gameOver, setGameOver] = useState(false);
   const [gameResult, setGameResult] = useState(null);
   const [error, setError] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      // Responsive board sizing
       setBoardWidth(Math.min(window.innerWidth * 0.8, 600));
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // Initial call
+    handleResize();
     startNewGame();
 
     return () => window.removeEventListener('resize', handleResize);
@@ -25,7 +28,6 @@ function ChessGame() {
 
   const startNewGame = async () => {
     try {
-      // Use full URL with http://
       const response = await axios.get('http://localhost:5001/new-game');
       setPosition(response.data.board);
       fetchLegalMoves();
@@ -50,6 +52,9 @@ function ChessGame() {
   };
 
   const onDrop = async ({ sourceSquare, targetSquare }) => {
+    // Prevent multiple moves while processing
+    if (isProcessing) return false;
+
     const move = sourceSquare + targetSquare;
 
     // Check if the move is legal
@@ -58,6 +63,7 @@ function ChessGame() {
     }
 
     try {
+      setIsProcessing(true);
       const response = await axios.post('http://localhost:5001/make-move', { move });
 
       // Update board position
@@ -68,8 +74,23 @@ function ChessGame() {
         setGameOver(true);
         setGameResult(response.data.result);
       } else {
-        // Refresh legal moves
-        fetchLegalMoves();
+        // Wait 1 second before fetching bot's move
+        await delay(1000);
+
+        // Fetch bot's move
+        const botMoveResponse = await axios.get('http://localhost:5001/bot-move');
+
+        // Update board with bot's move
+        setPosition(botMoveResponse.data.board);
+
+        // Check for game over after bot's move
+        if (botMoveResponse.data.game_over) {
+          setGameOver(true);
+          setGameResult(botMoveResponse.data.result);
+        } else {
+          // Refresh legal moves
+          fetchLegalMoves();
+        }
       }
 
       return true;
@@ -77,6 +98,8 @@ function ChessGame() {
       console.error('Error making move', error);
       setError(`Failed to make move: ${error.message}`);
       return false;
+    } finally {
+      setIsProcessing(false);
     }
   };
 

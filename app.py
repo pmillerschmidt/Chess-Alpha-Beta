@@ -1,5 +1,3 @@
-from time import sleep
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import chess
@@ -8,7 +6,7 @@ from scout_agent import ScoutAgent
 import PSE
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # More explicit CORS configuration
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Global game state
 game_board = chess.Board()
@@ -33,16 +31,8 @@ def make_move():
 
         # Explicit move validation
         if move in game_board.legal_moves:
-            # Create a copy of the board to test the move
-            test_board = game_board.copy()
-            test_board.push(move)
-
             # Push move on the actual game board
             game_board.push(move)
-
-            # If game not over, let scout agent make a move
-            if not game_board.is_game_over():
-                scout_agent.play(game_board)
 
             return jsonify({
                 "board": game_board.fen(),
@@ -55,6 +45,21 @@ def make_move():
 
     except Exception as e:
         return jsonify({"error": str(e), "board": game_board.fen()}), 400
+
+
+@app.route('/bot-move', methods=['GET'])
+def bot_move():
+    global game_board
+
+    # Only make bot move if game is not over
+    if not game_board.is_game_over():
+        scout_agent.play(game_board)
+
+    return jsonify({
+        "board": game_board.fen(),
+        "game_over": game_board.is_game_over(),
+        "result": game_board.result() if game_board.is_game_over() else None
+    })
 
 
 @app.route('/legal-moves', methods=['GET'])
