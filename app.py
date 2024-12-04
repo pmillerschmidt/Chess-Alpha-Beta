@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import chess
 import chess.polyglot
+from random_agent import RandomAgent
+from greedy_agent import GreedyAgent
+from minimax_agent import MinimaxAgent
 from scout_agent import ScoutAgent
 import PSE
 
@@ -10,20 +13,41 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Global game state
 game_board = chess.Board()
-scout_agent = ScoutAgent(color=chess.BLACK, depth=4, ob='gm2001.bin')
+
+# Create agent instances
+agents = {
+    'random': RandomAgent(color=chess.BLACK),
+    'greedy': GreedyAgent(color=chess.BLACK, ob='gm2001.bin'),
+    'minimax': MinimaxAgent(color=chess.BLACK, depth=3, ob='gm2001.bin'),  # Adjust depth as needed
+    'scout': ScoutAgent(color=chess.BLACK, depth=4, ob='gm2001.bin')
+}
+
+# Current agent
+current_agent = agents['scout']  # Default to scout
 
 
 @app.route('/new-game', methods=['GET'])
 def new_game():
-    global game_board
+    global game_board, current_agent
     game_board = chess.Board()
+
+    # Update current agent based on query parameter
+    agent_name = request.args.get('agent', 'scout')
+    if agent_name in agents:
+        current_agent = agents[agent_name]
+
     return jsonify({"board": game_board.fen()})
 
 
 @app.route('/make-move', methods=['POST'])
 def make_move():
-    global game_board
+    global game_board, current_agent
     data = request.json
+
+    # Update agent if specified in request
+    agent_name = data.get('agent', 'scout')
+    if agent_name in agents:
+        current_agent = agents[agent_name]
 
     # Validate and make human player's move
     try:
@@ -49,11 +73,16 @@ def make_move():
 
 @app.route('/bot-move', methods=['GET'])
 def bot_move():
-    global game_board
+    global game_board, current_agent
+
+    # Update agent if specified in query parameter
+    agent_name = request.args.get('agent', 'scout')
+    if agent_name in agents:
+        current_agent = agents[agent_name]
 
     # Only make bot move if game is not over
     if not game_board.is_game_over():
-        scout_agent.play(game_board)
+        current_agent.play(game_board)
 
     return jsonify({
         "board": game_board.fen(),

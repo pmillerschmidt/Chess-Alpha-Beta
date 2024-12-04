@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Chessboard from 'chessboardjsx';
 import axios from 'axios';
 
-// Async delay function
+const AGENTS = [
+  { id: 'random', name: 'Random Agent', description: 'Makes completely random legal moves' },
+  { id: 'greedy', name: 'Greedy Agent', description: 'Captures pieces whenever possible' },
+  { id: 'minimax', name: 'Minimax Agent', description: 'Uses minimax algorithm to look ahead' },
+  { id: 'scout', name: 'Scout Agent', description: 'Advanced agent using scout search' }
+];
+
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 function ChessGame() {
@@ -13,6 +19,7 @@ function ChessGame() {
   const [gameResult, setGameResult] = useState(null);
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState('random');
 
   useEffect(() => {
     const handleResize = () => {
@@ -28,7 +35,7 @@ function ChessGame() {
 
   const startNewGame = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/new-game');
+      const response = await axios.get(`http://localhost:5001/new-game?agent=${selectedAgent}`);
       setPosition(response.data.board);
       fetchLegalMoves();
       setGameOver(false);
@@ -36,8 +43,7 @@ function ChessGame() {
       setError(null);
     } catch (error) {
       console.error('Error starting new game', error);
-      setError(`Failed to start game: ${error.message}. 
-        Please ensure the backend server is running on http://localhost:5001`);
+      setError(`Failed to start game: ${error.message}`);
     }
   };
 
@@ -52,43 +58,34 @@ function ChessGame() {
   };
 
   const onDrop = async ({ sourceSquare, targetSquare }) => {
-    // Prevent multiple moves while processing
     if (isProcessing) return false;
 
     const move = sourceSquare + targetSquare;
-
-    // Check if the move is legal
     if (!legalMoves.includes(move)) {
       return false;
     }
 
     try {
       setIsProcessing(true);
-      const response = await axios.post('http://localhost:5001/make-move', { move });
+      const response = await axios.post(`http://localhost:5001/make-move`, {
+        move,
+        agent: selectedAgent
+      });
 
-      // Update board position
       setPosition(response.data.board);
 
-      // Check for game over
       if (response.data.game_over) {
         setGameOver(true);
         setGameResult(response.data.result);
       } else {
-        // Wait 1 second before fetching bot's move
         await delay(1000);
-
-        // Fetch bot's move
-        const botMoveResponse = await axios.get('http://localhost:5001/bot-move');
-
-        // Update board with bot's move
+        const botMoveResponse = await axios.get(`http://localhost:5001/bot-move?agent=${selectedAgent}`);
         setPosition(botMoveResponse.data.board);
 
-        // Check for game over after bot's move
         if (botMoveResponse.data.game_over) {
           setGameOver(true);
           setGameResult(botMoveResponse.data.result);
         } else {
-          // Refresh legal moves
           fetchLegalMoves();
         }
       }
@@ -101,6 +98,11 @@ function ChessGame() {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handleAgentChange = (e) => {
+    setSelectedAgent(e.target.value);
+    startNewGame();
   };
 
   return (
@@ -118,6 +120,33 @@ function ChessGame() {
     >
       <h1>Scout Chess Bot Challenge</h1>
 
+      <div style={{
+        marginBottom: '20px',
+        padding: '10px',
+        backgroundColor: '#f5f5f5',
+        borderRadius: '5px',
+        maxWidth: '400px'
+      }}>
+        <select
+          value={selectedAgent}
+          onChange={handleAgentChange}
+          style={{
+            padding: '8px',
+            fontSize: '16px',
+            width: '200px'
+          }}
+        >
+          {AGENTS.map(agent => (
+            <option key={agent.id} value={agent.id}>
+              {agent.name}
+            </option>
+          ))}
+        </select>
+        <p style={{ margin: '10px 0 0 0', fontSize: '14px', color: '#666' }}>
+          {AGENTS.find(agent => agent.id === selectedAgent)?.description}
+        </p>
+      </div>
+
       {error && (
         <div style={{
           color: 'red',
@@ -134,7 +163,20 @@ function ChessGame() {
         <div className="game-over">
           <h2>Game Over</h2>
           <p>Result: {gameResult}</p>
-          <button onClick={startNewGame}>New Game</button>
+          <button
+            onClick={startNewGame}
+            style={{
+              padding: '10px 20px',
+              fontSize: '16px',
+              cursor: 'pointer',
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px'
+            }}
+          >
+            New Game
+          </button>
         </div>
       ) : (
         <div style={{
