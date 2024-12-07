@@ -17,7 +17,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "npm run build && git add . && git commit -m 'Deploy to main' && git push origin main",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
