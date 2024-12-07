@@ -1,0 +1,16 @@
+{
+  "name": "chess-alpha-beta",
+  "homepage": "https://pmillerschmidt.github.io/Chess-Alpha-Beta/",
+  "version": "1.0.0",
+  "scripts": {
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject",
+  "predeploy": "npm run build",
+  "deploy": "git add . && git commit -m 'Deploy to main' && git push origin main"
+},
+  "devDependencies": {
+    "gh-pages": "^5.0.0"
+  }
+}
