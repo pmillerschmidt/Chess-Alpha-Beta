@@ -120,7 +120,7 @@ function ChessGame() {
         boxSizing: 'border-box'
       }}
     >
-      <h1>Scout Chess Bot Challenge</h1>
+      {/*<h1>Scout Bot</h1>*/}
 
       <div style={{
         marginBottom: '20px',
