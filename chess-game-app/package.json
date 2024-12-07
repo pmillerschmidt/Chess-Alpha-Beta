@@ -1,5 +1,6 @@
 {
   "name": "chess-game-app",
+  "homepage": "https://pmillerschmidt.github.io/Chess-Alpha-Beta",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
